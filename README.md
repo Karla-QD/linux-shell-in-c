@@ -1,24 +1,23 @@
 # Shell-en-Linux
 
-## Proyecto del Curso de Sistemas Operativos 
+Operating Systems Course Project
 
-El proyecto consiste en el desarrollo de un Shell para Linux utilizando el lenguaje de programación C, con las siguientes funcionalidades destacadas:
+The project consists of developing a Shell for Linux using the C programming language, with the following highlighted features:
 
-### 1. Compatibilidad Total con Comandos de Linux:
+1. Full Compatibility with Linux Commands:
 
-El Shell es capaz de ejecutar cualquier comando propio del sistema operativo Linux, proporcionando una interfaz completa y funcional para el usuario.
+The Shell is capable of executing any command native to the Linux operating system, providing a complete and functional interface for the user.
 
-### 2. Historial de Comandos:
+2. Command History:
 
-Implementa un historial que almacena los últimos 35 comandos ejecutados. Se facilita la recuperación de comandos anteriores mediante la introducción de una posición específica seguida del signo de exclamación, como en el ejemplo !n.
+It implements a history that stores the last 35 executed commands. Previous commands can be retrieved by entering a specific position followed by the exclamation mark, as in the example !n.
 
-### 3. Ejecución de Comandos en Segundo Plano:
+3. Background Command Execution:
 
-Permite la ejecución de comandos en segundo plano mediante el uso de funciones fork. Para lograr esto, el usuario coloca el comando a ejecutar en segundo plano seguido de '&' y al presionar enter. Posteriormente, puede ingresar otros comandos que se ejecutarán en primer plano.
+It allows the execution of commands in the background using fork functions. To achieve this, the user places the command to be executed in the background followed by '&' and presses enter. Subsequently, other commands can be entered that will run in the foreground.
 
-### 4. Soporte para un Pipe:
+4. Pipe Support:
 
-Facilita el uso de pipes para la creación de flujos de datos entre comandos. Por ejemplo, la ejecución de ls | sort realiza una operación de pipe entre los comandos ls y sort.
+It enables the use of pipes to create data flows between commands. For example, executing ls | sort performs a pipe operation between the ls and sort commands.
 
-
-Este proyecto no solo proporciona un Shell completamente funcional, sino que también representa una valiosa oportunidad de aprendizaje integral. A través de la implementación de conceptos fundamentales de sistemas operativos, programación en C y gestión de procesos.
+This project not only provides a fully functional Shell but also represents a valuable and comprehensive learning opportunity. Through the implementation of fundamental concepts of operating systems, programming in C, and process management.
