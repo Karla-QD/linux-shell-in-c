@@ -9,87 +9,83 @@
 #define MAX_LEN 1024
 #define MAX_COMMANDS 35
 /*
-Integrantes:
+Students:
 
 Isaac Fabian Palma Medina 1 1865 0422
 Karla Verónica Quiros Delgado 6 0465 0870
 */
-void mostrarShell()
+void showShell()
 {
     printf("\033[0;31m");
     printf("PalmaQuirosShell>> ");
     printf("\033[0m");
 }
-//Cuenta los caracteres validos de un arreglo de chars
-int contarChars(char str[]) {
+// Counts the valid characters in a char array
+int countChars(char str[]) {
     int num = 0;
     for (int i = 0; str[i] != '\0'; i++) {
         num++;
     }
     return num - 1;
 }
-//Verifica entradas validas(inicada en ! y seguida de un numero, no permite espacios o caracteres, letras)
-bool revisarDigitos(char *str) {
-    int largo = contarChars(str);
-    for (int i = 1; i < largo; i++) {
-        if (!isdigit(str[i])) {
+// Checks for valid inputs (starting with ! and followed by a number; does not allow spaces, characters, or letters)
+bool checkDigits(char *input) {
+    int length = countChars(input);
+    for (int i = 1; i < length; i++) {
+        if (!isdigit(input[i])) {
             return false;
         }
     }
-    return true && str[0] == '!';
+    return true && input[0] == '!';
 }
 
-// viewHistorial: funcion que devuelve los ultimos comandos ingresados en un rango de 1-35(los ultimos 35)
-
-void viewHistorial(int* actual_comando, int * contador,char ** historial)
+// viewHistory: function that returns the last entered commands within a range of 1–35 (the last 35)
+void viewHistory(int* current_command, int * counter, char ** history)
 {
-    int numComandos = *contador < MAX_COMMANDS ? *contador : MAX_COMMANDS;
-    for (int i = numComandos - 1; i >= 0; i--)
+    int numCommands = *counter < MAX_COMMANDS ? *counter : MAX_COMMANDS;
+    for (int i = numCommands - 1; i >= 0; i--)
     {
-        int indice = (*actual_comando - numComandos + i + MAX_COMMANDS) % MAX_COMMANDS;
-        printf("%d: %s", i + 1, historial[indice]);
+        int index = (*current_command - numCommands + i + MAX_COMMANDS) % MAX_COMMANDS;
+        printf("%d: %s", i + 1, history[index]);
     }
 }
 
-// comandoSolicitado: verifica si el numero de comando ingresado existe en el historial y si existe lo muestra, sino muestra un mensaje
-
-void comandoSolicitado(char *entrada, int *contador, char **historial) {
-    int cont = *contador;
-    int comandoNum = atoi(entrada + 1); // Convertir la parte numérica de la entrada en un entero.
+// requestedCommand: checks whether the entered command number exists in the history; if it does, it displays it, otherwise it shows a message
+void requestedCommand(char *input, int *counter, char **history) {
+    int cont = *counter;
+    int commandNum = atoi(input + 1); // Convert the numeric part of the input to an integer
     
-    if(!revisarDigitos(entrada)){
-    	printf("La entrada no cumple con el formato requerido.\n");
+    if(!checkDigits(input)){
+        printf("Input does not meet the required format.\n");
         return;
     }
-    else if (comandoNum < 1 || comandoNum > 35 ) {
-        printf("Numero de comando solicitado, fuera del rango del historial(1-35)\n");
+    else if (commandNum < 1 || commandNum > 35 ) {
+        printf("Requested command number is out of history range (1-35)\n");
         return;
     }
     if (cont == 0){
-        printf("El historial esta vacio.\n"); 
+        printf("History is empty.\n"); 
         return; 
-    } else if (comandoNum > cont) {
-        printf("No existe un comando en esa posicion\n");
+    } else if (commandNum > cont) {
+        printf("No command exists at that position\n");
         return;
     }
-    printf("%s", historial[comandoNum - 1]);
+    printf("%s", history[commandNum - 1]);
 }
 
-// ultimoEsAnd: verifica si en la entrada de argumentos el ultimo elemento es &
-
-bool ultimoEsAnd(char **argumentos)
+// lastIsAnd: checks if the last argument in the input is &
+bool lastIsAnd(char **args)
 {
     int i = 0;
-    while (argumentos[i + 1] != NULL)
+    while (args[i + 1] != NULL)
     {
         i++;
     }
-    return strcmp(argumentos[i], "&") == 0;
+    return strcmp(args[i], "&") == 0;
 }
 
-// tokenizar: separa una cadena de caracteres en tokens, segun un delimitador
-
-void tokenizar(char *str, const char *delim, char **arr1, char **arr2)
+// tokenize: splits a string into tokens according to a delimiter
+void tokenize(char *str, const char *delim, char **arr1, char **arr2)
 {
     char *token;
     int pos = 0;
@@ -115,89 +111,88 @@ void tokenizar(char *str, const char *delim, char **arr1, char **arr2)
     }
 }
 
-void inicializarHistorial(char** historial) {
+void initializeHistory(char** history) {
     for (int i = 0; i < MAX_COMMANDS; i++) {
-        historial[i] = malloc(MAX_LEN * sizeof(char));
+        history[i] = malloc(MAX_LEN * sizeof(char));
     }
 }
 
 int main(int argc, char *argv[]) {
 
-    char** historial = malloc(MAX_COMMANDS * sizeof(char*));
-    inicializarHistorial(historial);
+    char** history = malloc(MAX_COMMANDS * sizeof(char*));
+    initializeHistory(history);
     
-    int* actual_comando = malloc(sizeof(int));
-    int* contador = malloc(sizeof(int));
-    *actual_comando = 0;
-    *contador = 0;
-    char entrada[MAX_LEN]; // Entrada del usuario.
+    int* current_command = malloc(sizeof(int));
+    int* counter = malloc(sizeof(int));
+    *current_command = 0;
+    *counter = 0;
+    char input[MAX_LEN]; // User input
 
     for (;;) 
     {
-        mostrarShell();
+        showShell();
 
-    verificar:
-        if (fgets(entrada, sizeof(entrada), stdin) == NULL || entrada[0] == '\n') // Obtener la entrada del usuario.
+    verify:
+        if (fgets(input, sizeof(input), stdin) == NULL || input[0] == '\n') // Get user input
         {
-            // En caso de que la entrada sea inválida.
-            mostrarShell();
-            goto verificar;
+            // In case the input is invalid
+            showShell();
+            goto verify;
         }
 
-        if (strcmp(entrada, "exit\n") == 0){break;}
-        // Opción que el usuario ingrese !N siendo n el numero de comando que desea obtener del historial.
-        else if (entrada[0] == '!')
+        if (strcmp(input, "exit\n") == 0){break;}
+        // Option when the user enters !N where N is the command number to retrieve from history
+        else if (input[0] == '!')
         {
-            if (entrada[2]=='\0'){
-                printf("Necesita un numero de comando para buscar, seguido del ! \n");
+            if (input[2]=='\0'){
+                printf("You need a command number to search, following the ! \n");
             }
-            else{comandoSolicitado(entrada,contador,historial);}
+            else{requestedCommand(input,counter,history);}
         }
-        else if (strcmp(entrada, "historial\n") == 0 || strcmp(entrada, "historial &\n") == 0)
+        else if (strcmp(input, "historial\n") == 0 || strcmp(input, "historial &\n") == 0)
         {
-            viewHistorial(actual_comando,contador,historial);
+            viewHistory(current_command,counter,history);
         }
         else
         {
-            if (*contador >= MAX_COMMANDS)
+            if (*counter >= MAX_COMMANDS)
             {
             for (int i = 0; i < MAX_COMMANDS - 1; i++)
                 {
-                    strcpy(historial[i], historial[i + 1]);
+                    strcpy(history[i], history[i + 1]);
                 }
-                strcpy(historial[MAX_COMMANDS - 1], entrada);
+                strcpy(history[MAX_COMMANDS - 1], input);
                
             }
             else{
-                strcpy(historial[*actual_comando], entrada);
-                *actual_comando = (*actual_comando + 1) % MAX_COMMANDS;
-                *contador = *contador + 1;
+                strcpy(history[*current_command], input);
+                *current_command = (*current_command + 1) % MAX_COMMANDS;
+                *counter = *counter + 1;
             }
 
             char *arg1[MAX_LEN];
             char *arg2[MAX_LEN];
 
             for (int i = 0; i < MAX_LEN; i++){ arg1[i] = NULL;}
-
             for (int i = 0; i < MAX_LEN; i++){arg2[i] = NULL;}
 
-            tokenizar(entrada, " \n", arg1, arg2);
+            tokenize(input, " \n", arg1, arg2);
 
             if (arg2[0] == NULL)
             {
-                bool segundoPlano = ultimoEsAnd(arg1);
+                bool background = lastIsAnd(arg1);
                 int pid = fork();
                 if (pid < 0)
                 {
-                    printf("Error al crear el proceso hijo.\n");
+                    printf("Error creating child process.\n");
                     exit(1);
                 }
                 else if (pid == 0)
                 {
-                    // Proceso hijo.
-                    if (segundoPlano)
+                    // Child process
+                    if (background)
                     {
-                        // Se elimina el "&" del arreglo de argumentos.
+                        // Remove "&" from argument array
                         int j = 0;
                         while (arg1[j + 1] != NULL)
                         {
@@ -205,32 +200,32 @@ int main(int argc, char *argv[]) {
                         }
                         arg1[j] = NULL;
                         sleep(2);
-                        printf("\nProceso hijo dice:\n");
+                        printf("\nChild process says:\n");
                     }
 
                     execvp(arg1[0], arg1);
 
-                    printf("\tError al ejecutar el comando, comando no válido.\n");
+                    printf("\tError executing command, invalid command.\n");
                     exit(0);
                 }
                 else
                 {
-                    // Proceso padre.
-                    if (!segundoPlano)
+                    // Parent process
+                    if (!background)
                     { 
                         int status;
                         waitpid(pid, &status, 0);
                     }
                     else
-                    { // No se espera al proceso hijo.
-                        printf("Proceso en segundo plano.\n");
+                    { // Do not wait for child process
+                        printf("Background process.\n");
                     }
                 }
             }
             else
             {
-                int extremos[2];
-                int pipeStatus = pipe(extremos);
+                int pipeEnds[2];
+                int pipeStatus = pipe(pipeEnds);
                 if (pipeStatus == -1)
                 {
                     exit(1);
@@ -239,29 +234,29 @@ int main(int argc, char *argv[]) {
                 if (pid1 == 0)
                 {
                     close(STDOUT_FILENO);
-                    dup(extremos[1]);
-                    close(extremos[0]);
-                    close(extremos[1]);
+                    dup(pipeEnds[1]);
+                    close(pipeEnds[0]);
+                    close(pipeEnds[1]);
 
                     execvp(arg1[0], arg1);
-                    printf("\tError al ejecutar el comando, comando no válido.\n");
+                    printf("\tError executing command, invalid command.\n");
                     exit(0);
                 }
                 int pid2 = fork();
                 if (pid2 == 0)
                 {
                     close(STDIN_FILENO);
-                    dup(extremos[0]);
-                    close(extremos[1]);
-                    close(extremos[0]);
+                    dup(pipeEnds[0]);
+                    close(pipeEnds[1]);
+                    close(pipeEnds[0]);
 
                     execvp(arg2[0], arg2);
-                       printf("\tError al ejecutar el comando, comando no válido.\n");
+                       printf("\tError executing command, invalid command.\n");
                     exit(0);
                 }
 
-                close(extremos[0]);
-                close(extremos[1]);
+                close(pipeEnds[0]);
+                close(pipeEnds[1]);
                 int status1;
                 int status2;
                 waitpid(pid1, &status1, 0);
@@ -269,13 +264,13 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-	free(contador);
-	free(actual_comando);
-    	free(historial);
+    free(counter);
+    free(current_command);
+    free(history);
     return 0;
 }
 /*
-Referencias:
+References:
 
 https://www.geeksforgeeks.org/piping-in-unix-or-linux/
 https://stackoverflow.com/questions/13801175/classic-c-using-pipes-in-execvp-function-stdin-and-stdout-redirection
